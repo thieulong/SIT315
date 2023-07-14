@@ -1,10 +1,10 @@
-const int buttonPin = 2;  // Push button pin
+const int buttonPin = 8;  // Push button pin
 const int ledPin = 13;    // LED pin
 
 volatile int buttonState = LOW;  
 
 void setup() {
-  pinMode(buttonPin, INPUT_PULLUP);  
+  pinMode(buttonPin, INPUT);  
   pinMode(ledPin, OUTPUT);           
   Serial.begin(9600);
   attachInterrupt(digitalPinToInterrupt(buttonPin), buttonInterrupt, CHANGE);  // Attach the interrupt to the button pin and keep track of the status of the button
