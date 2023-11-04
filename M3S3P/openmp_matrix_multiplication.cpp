@@ -1,0 +1,58 @@
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
+#include <iomanip>
+#include <omp.h>
+
+using namespace std;
+using namespace std::chrono;
+
+const int N = 200;
+
+int main() {
+    int A[N][N];
+    int B[N][N];
+    int C[N][N];
+
+    srand(time(0));
+
+#pragma omp parallel for
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            A[i][j] = rand() % 10;
+            B[i][j] = rand() % 10;
+        }
+    }
+
+    auto start = high_resolution_clock::now();
+
+#pragma omp parallel for
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            C[i][j] = 0;
+            for (int k = 0; k < N; ++k) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - start);
+
+    ofstream outputFile("openmp_matrix_multiplication_result.txt");
+    if (outputFile.is_open()) {
+        for (int i = 0; i < N; ++i) {
+            for (int j = 0; j < N; ++j) {
+                outputFile << C[i][j] << " ";
+            }
+            outputFile << endl;
+        }
+        outputFile.close();
+    }
+
+    cout << fixed << setprecision(3) << "Execution time: " << duration.count() / 1000.0 << " ms" << endl;
+
+    return 0;
+}
